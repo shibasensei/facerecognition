@@ -1,51 +1,94 @@
 import React, { Component } from 'react';
-import Particles from 'react-particles-js';
 import Navigation from './components/navigation/Navigation';
 import Logo from './components/logo/Logo';
 import ImageLinkForm from './components/imageLinkForm/ImageLinkForm';
-import Rank from './components/Rank/Rank';
+import Rank from './components/rank/Rank';
+import Clarify from 'clarifai';
+import Register from './components/register/Register'
+import FaceRecognition from './components/faceRecognition/FaceRecognition';
+import SignIn from './components/signIn/SignIn';
 import 'tachyons';
 import './App.css'
 
-const particlesParams = {
-  particles: {
-    number:{
-        value: 80,
-        density:{
-          enable:true,
-          value_area:800
-        }
-    }
-	}
-}
+const app = new Clarify.App({
+  apiKey:'03b5418dccea486e8635fcece57ed735'
+});
 
 class App extends Component {
   constructor(){
     super();
     this.state = {
       input:'',
+      imageUrl: '',
+      box: {},
+      route:'signin',
+      isSignedIn: false
     }
   }
 
   onChangeInput = (event) =>{
-    console.log(event.target.value);
+    this.setState({input:event.target.value});
+  }
+
+  calculateFaceLocation = (data) => {
+    const faces = data.outputs[0].data.regions[0].region_info.bounding_box;
+    const img = document.getElementById('inputimage');
+    const width = Number(img.width);
+    const height = Number(img.height);
+    return {
+       leftCol: faces.left_col*width,
+       topRow: faces.top_row * height,
+       rightCol: width - (faces.right_col*width),
+       bottomRow: height - (faces.bottom_row*height)
+    };
+  }
+
+  displayFaceBox = (box) =>{
+    this.setState({ box});
   }
 
   onSubmiteDetect = () =>{
-    console.log('click ');
+    this.setState({imageUrl:this.state.input});
+    app.models.predict(
+      Clarify.FACE_DETECT_MODEL,
+      this.state.input)
+      .then(response => this.displayFaceBox(this.calculateFaceLocation(response)))
+      .catch(err => console.log(err));
   }
+
+  onRouteChange = (route) => {
+    if(route ==='signin' || route ==='register'){
+      this.setState({isSignedIn:false});
+    }else{
+      this.setState({isSignedIn:true});
+    }
+    this.setState({route});
+  }
+
   render() {
-    return (
-      <div className="App">
-        <Particles params ={particlesParams} className='particles'/>
-        <Navigation />
-         <Logo />
-         <Rank />
-         <ImageLinkForm onChangeInput={this.onChangeInput} onSubmiteDetect={this.onSubmiteDetect}/>
-         {/* <FaceRecognition> */}
-      </div>
-    );
+    const {box,route,imageUrl,isSignedIn} = this.state;
+      return (
+        <div className="App">
+          <Navigation  isSignedIn={isSignedIn} onRouteChange={this.onRouteChange}/>
+          { route === 'home'
+            ? <div>
+              <Logo />
+              <Rank />
+              <ImageLinkForm
+                onChangeInput={this.onChangeInput}
+                onSubmiteDetect={this.onSubmiteDetect}
+              />
+              <FaceRecognition box={box} imageUrl={imageUrl}/>
+            </div>
+            :(
+              this.state.route ==='signin'
+              ? <SignIn onRouteChange={this.onRouteChange}/>
+              : <Register onRouteChange={this.onRouteChange}/>
+            )
+          }
+        </div>
+      );
+    }
   }
-}
 
 export default App;
