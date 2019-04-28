@@ -7,7 +7,9 @@ class Register extends React.Component {
     this.state = {
       nameRegister:'',
       emailRegister:'',
-      passwordRegister:''
+      passwordRegister:'',
+      status:0,
+      statusText:''
     }
   }
 
@@ -33,13 +35,17 @@ class Register extends React.Component {
         password:this.state.passwordRegister
       })
     })
-    .then(response => response.json())
+    .then(response => {
+      if(response.status === 400) this.setState({status:400})
+      response.json()
+    })
     .then(user =>{
-      if(user){
+      if(this.state.status!==400){
         this.props.loadUser(user);
         this.props.onRouteChange('home');
+        this.setState({statusText:'registered!'})
       }else{
-
+        this.setState({statusText:'email already registered'})
       }
     });
   }
@@ -78,11 +84,7 @@ class Register extends React.Component {
                 value="Register"
               />
             </div>
-            {/* <div className="lh-copy mt3">
-              <p
-                onClick={()=>onRouteChange('signin')}
-                className="f6 link dim black db pointer">Sign in?</p>
-            </div> */}
+            <small id="status" className="f6 black-100 db mt2">{this.state.statusText}</small>
           </div>
         </main>
       </article>

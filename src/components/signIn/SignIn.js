@@ -5,7 +5,8 @@ class SignIn  extends React.Component {
     super(props);
     this.state = {
       signInEmail:'',
-      signInPassword:''
+      signInPassword:'',
+      status:'',
     }
   }
 
@@ -18,23 +19,27 @@ class SignIn  extends React.Component {
   }
 
   onSubmitSignIn = () => {
-    fetch('http://localhost:3001/signin',{
-      method: 'post',
-      headers: {'Content-Type' : 'application/json'},
-      body: JSON.stringify({
-        email:this.state.signInEmail,
-        password:this.state.signInPassword
-      })
-    })
-    .then(response=> response.json())
-    .then(user => {
-      if(user.id){
-        this.props.loadUser(user);
-        this.props.onRouteChange('home');
-      }else{
-
-      }
-    });
+    if(this.state.signInEmail!=='' | this.state.signInEmail!==''){
+          fetch('http://localhost:3001/signin',{
+            method: 'post',
+            headers: {'Content-Type' : 'application/json'},
+            body: JSON.stringify({
+              email:this.state.signInEmail,
+              password:this.state.signInPassword
+            })
+          })
+          .then(response=> response.json())
+          .then(user => {
+            if(user.id){
+              this.props.loadUser(user);
+              this.props.onRouteChange('home');
+            }else{
+              this.setState({status:'wrong credentials'});
+            }
+          });
+    }else{
+      this.setState({status:'enter login and password'});
+    }
 
   }
 
@@ -76,11 +81,7 @@ class SignIn  extends React.Component {
                 value="Sign in"
               />
             </div>
-            {/* <div className="lh-copy mt3">
-              <p
-                onClick={()=>onRouteChange('register')}
-                className="f6 link dim black db pointer">Register</p>
-            </div> */}
+            <small id="status" className="f6 black-100 db  mt2">{this.state.status}</small>
           </div>
         </main>
       </article>
