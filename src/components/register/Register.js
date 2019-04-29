@@ -1,16 +1,17 @@
 import React from 'react';
 
+const initialState = {
+  nameRegister:'',
+  emailRegister:'',
+  passwordRegister:'',
+  status:'',
+}
+
 class Register extends React.Component {
 
   constructor(props){
     super(props);
-    this.state = {
-      nameRegister:'',
-      emailRegister:'',
-      passwordRegister:'',
-      status:0,
-      statusText:''
-    }
+    this.state = initialState;
   }
 
   onNameChange = (event) =>{
@@ -35,17 +36,39 @@ class Register extends React.Component {
         password:this.state.passwordRegister
       })
     })
-    .then(response => {
-      if(response.status === 400) this.setState({status:400})
-      response.json()
-    })
+    .then(response =>response.json())
     .then(user =>{
-      if(this.state.status!==400){
-        this.props.loadUser(user);
-        this.props.onRouteChange('home');
-        this.setState({statusText:'registered!'})
+      //console.log(user)
+      if(user === 100 || user === 101 || user === 102 || user === 103){
+        switch(user){
+          case 100:
+            this.setState({status:'invalid email'})
+          break;
+          case 101:
+          this.setState({status:'email already registered'})
+          break;
+          case 102:
+          this.setState({status:'something went wrong, sorry!'})
+          break;
+          case 103:
+          this.setState({status:'password >=8 please!'})
+          break;
+          default:
+          this.setState({status:'service error'})
+        }
+        this.setState({initialState})
       }else{
-        this.setState({statusText:'email already registered'})
+        this.setState({status:'registered!'})
+
+        fetch('http://localhost:3001/send',{
+          method: 'post',
+          headers: {'Content-Type' : 'application/json'},
+          body: JSON.stringify({
+            email:this.state.emailRegister,
+          })
+        })
+          this.setState({initialState})
+          this.props.onRouteChange('signin');
       }
     });
   }
@@ -84,7 +107,7 @@ class Register extends React.Component {
                 value="Register"
               />
             </div>
-            <small id="status" className="f6 black-100 db mt2">{this.state.statusText}</small>
+            <small id="status" className="f6 black-100 db mt2">{this.state.status}</small>
           </div>
         </main>
       </article>

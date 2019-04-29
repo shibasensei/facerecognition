@@ -19,6 +19,7 @@ class SignIn  extends React.Component {
   }
 
   onSubmitSignIn = () => {
+
     if(this.state.signInEmail!=='' | this.state.signInEmail!==''){
           fetch('http://localhost:3001/signin',{
             method: 'post',
@@ -31,8 +32,12 @@ class SignIn  extends React.Component {
           .then(response=> response.json())
           .then(user => {
             if(user.id){
-              this.props.loadUser(user);
-              this.props.onRouteChange('home');
+              if(user.isverified){
+                this.props.loadUser(user);
+                this.props.onRouteChange('home');
+              }else{
+                this.setState({status:'verify email please'});
+              }
             }else{
               this.setState({status:'wrong credentials'});
             }
@@ -40,7 +45,6 @@ class SignIn  extends React.Component {
     }else{
       this.setState({status:'enter login and password'});
     }
-
   }
 
   render(){
@@ -80,6 +84,9 @@ class SignIn  extends React.Component {
                 type="submit"
                 value="Sign in"
               />
+            </div>
+            <div className="lh-copy mt3">
+              <p className="f5 link dim black db pointer">Restore password?</p>
             </div>
             <small id="status" className="f6 black-100 db  mt2">{this.state.status}</small>
           </div>
