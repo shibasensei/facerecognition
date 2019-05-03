@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Navigation from './components/navigation/Navigation';
 import Logo from './components/logo/Logo';
 import ImageLinkForm from './components/imageLinkForm/ImageLinkForm';
-import Rank from './components/rank/Rank';
+import Rank from './components/rank/Rank.js';
 import Register from './components/register/Register'
 import FaceRecognition from './components/faceRecognition/FaceRecognition';
 import ResetPassword from './components/resetPassword/ResetPassword.js'
