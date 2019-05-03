@@ -5,6 +5,7 @@ import ImageLinkForm from './components/imageLinkForm/ImageLinkForm';
 import Rank from './components/rank/Rank';
 import Register from './components/register/Register'
 import FaceRecognition from './components/faceRecognition/FaceRecognition';
+import ResetPassword from './components/resetPassword/ResetPassword.js'
 import SignIn from './components/signIn/SignIn';
 import 'tachyons';
 import './App.css'
@@ -46,6 +47,14 @@ class App extends Component {
 
   componentDidMount(){
     fetch('http://localhost:3001')
+  }
+
+  showPassword = () =>{
+    let button = document.getElementById('password')
+    if(button.type === 'password')
+      button.type = 'text'
+    else
+      button.type = 'password'
   }
 
   onChangeInput = (event) =>{
@@ -130,7 +139,7 @@ class App extends Component {
   }
 
   onRouteChange = (route) => {
-    if(route ==='signin' || route ==='register'){
+    if(route ==='signin' || route ==='register'|| route ==='resetpassword'){
       this.setState(initialState);
     }else{
       this.setState({isSignedIn:true});
@@ -143,7 +152,13 @@ class App extends Component {
       return (
         <div className="App">
           <Navigation  isSignedIn={isSignedIn} onRouteChange={this.onRouteChange}/>
-          { route === 'home'
+          {
+            route ==='resetpassword'
+            ? <ResetPassword onRouteChange={this.onRouteChange}
+                              showPassword={this.showPassword}
+            />
+            :(
+            route === 'home'
             ? <div>
               <Logo />
               <Rank
@@ -160,10 +175,14 @@ class App extends Component {
               />
             </div>
             :(
-              this.state.route ==='signin'
+              route ==='signin'
               ? <SignIn onRouteChange={this.onRouteChange} loadUser={this.loadUser}/>
-              : <Register onRouteChange={this.onRouteChange} loadUser={this.loadUser}/>
+              : <Register onRouteChange={this.onRouteChange}
+                loadUser={this.loadUser}
+                showPassword={this.showPassword}
+              />
             )
+          )
           }
         </div>
       );

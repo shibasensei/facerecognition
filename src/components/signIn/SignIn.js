@@ -18,6 +18,10 @@ class SignIn  extends React.Component {
     this.setState({signInPassword:event.target.value});
   }
 
+  restorePassword = () =>{
+    this.props.onRouteChange('resetpassword');
+  }
+
   onSubmitSignIn = () => {
 
     if(this.state.signInEmail!=='' | this.state.signInEmail!==''){
@@ -86,7 +90,7 @@ class SignIn  extends React.Component {
               />
             </div>
             <div className="lh-copy mt3">
-              <p className="f5 link dim black db pointer">Restore password?</p>
+              <p className="f5 link dim black db pointer" onClick={() =>this.props.onRouteChange('resetpassword')}>Forgot password?</p>
             </div>
             <small id="status" className="f6 black-100 db  mt2">{this.state.status}</small>
           </div>

@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 const initialState = {
@@ -97,6 +98,10 @@ class Register extends React.Component {
                 <input
                   onChange={this.onPasswordChange}
                   className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="password" name="password"  id="password"/>
+              </div>
+              <div className="flex items-center mb2">
+                <input onClick={this.props.showPassword} className="mr2 black" type="checkbox" id="showpassword" value="showpassword"/>
+                <label htmlFor="showpassword" className="lh-copy">Show Password</label>
               </div>
             </fieldset>
             <div className="">
