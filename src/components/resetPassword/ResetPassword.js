@@ -21,7 +21,7 @@ class ResetPassword extends React.Component {
   }
 
   changePassword = () => {
-    fetch('http://localhost:3001/reset',{
+    fetch('https://git.heroku.com/facerecognition-b-shibasensei.git/reset',{
       method: 'post',
       headers: {'Content-Type' : 'application/json'},
       body: JSON.stringify({

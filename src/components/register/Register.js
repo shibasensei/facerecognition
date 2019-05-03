@@ -28,7 +28,7 @@ class Register extends React.Component {
   }
 
   registerUser = () =>{
-    fetch('http://localhost:3001/register',{
+    fetch('https://git.heroku.com/facerecognition-b-shibasensei.git/register',{
       method: 'post',
       headers: {'Content-Type' : 'application/json'},
       body: JSON.stringify({
@@ -61,7 +61,7 @@ class Register extends React.Component {
       }else{
         this.setState({status:'registered!'})
 
-        fetch('http://localhost:3001/send',{
+        fetch('https://git.heroku.com/facerecognition-b-shibasensei.git/send',{
           method: 'post',
           headers: {'Content-Type' : 'application/json'},
           body: JSON.stringify({
